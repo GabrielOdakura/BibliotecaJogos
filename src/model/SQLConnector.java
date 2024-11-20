@@ -45,7 +45,31 @@ public class SQLConnector {
         }
         return false;
     }
+    private int pegarIdUsuario(String usuario){
+        String query = "select id_usuario from `bibliotecajogos`.`usuarios` where nome_usuario = ? ";
+        try{
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, usuario);
 
+            ResultSet rs = stmt.executeQuery();
+            return rs.getInt("id_usuario");
+        }catch(SQLException e){
+            System.out.println("Houve um erro!");
+        }
+        return 0;
+    }
+    private int verificarExistenciaUsuarioBiblioteca(int idUsuario){
+        String query = "select jogos_id_jogo from `bibliotecajogos`.`bibliotecas` join `bibliotecajogos`.`usuarios` on `bibliotecajogos`.`usuarios`.`id_usuario` = `bibliotecajogos`.`bibliotecas`.`id_usuario` ";
+        try{
+            PreparedStatement stmt = connection.prepareStatement(query);
+
+            ResultSet rs = stmt.executeQuery();
+            return rs.getInt("id_usuario");
+        }catch(SQLException e){
+            System.out.println("Houve um erro!");
+        }
+        return 0;
+    }
     public int atualizarSaldo(double novoSaldo, String usuario) {
         String query = "update `bibliotecajogos`.`usuarios` set saldo = ? where nome_usuario = ? ;";
         try {
@@ -62,6 +86,36 @@ public class SQLConnector {
         return 0;
     }
 
+    public int adicionarJogoUsuario(String idJogo,String nomeUsuario){
+        
+        String query = "insert into `bibliotecajogos`.`bibliotecas values ( ? , ? );";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+
+            stmt.setString(1, usuario);
+            stmt.setString(2, senha);
+
+            return stmt.executeUpdate();
+        }catch(SQLException e){
+            System.out.println("Não foi possível realizar a compra");
+        }
+        return 0;
+    }
+    public double pegarPrecoJogo(String idJogo){
+            String query = "Select preco_jogo from `bibliotecajogos`.`jogos` where id_jogo = ?;";
+            try {
+                PreparedStatement stmt = connection.prepareStatement(query);
+    
+                stmt.setString(1, idJogo);
+    
+                ResultSet rs = stmt.executeQuery();
+                rs.next();
+                return rs.getDouble("preco_jogo");
+            }catch(SQLException e){
+                System.out.println("Houve um erro ao tentar encontrar o preco do jogo!");
+            }
+            return 0;
+    }
     public double checarSaldo(String usuario) {
         String query = "Select saldo from `bibliotecajogos`.`usuarios` where nome_usuario = ? ;";
         try {
@@ -93,15 +147,34 @@ public class SQLConnector {
         return 0;
     }
 
-    public String pegarListaJogos() {
-        String query = "select id_jogo, nome_jogo from `bibliotecajogos`.`jogos`;";
+
+    public String pegarListaJogosUsuario(String usuario) {
+        String query = "select jogos_id_jogo, nome_jogo from `bibliotecajogos`.`bibliotecas` join `bibliotecajogos`.`jogos` on `bibliotecas`.`jogos_id_jogo` = `jogos`.`id_jogo` where `bibliotecajogos`.`bibliotecas`.`id_usuario` = ? ;";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            
+            stmt.setString(1, usuario);
+            ResultSet rs = stmt.executeQuery();
+            String lista = "\nLista de jogos do usuario:\n";
+            while (rs.next()){
+                lista += rs.getInt("id_jogo") + " - " + rs.getString("nome_jogo") + "\n";
+            }
+            return lista;
+        }catch(SQLException e){
+            System.out.println("Houve um erro ao pegar a lista de jogos!");
+        }
+        return "";
+    }
+
+    public String pegarListaTodosJogos(){
+        String query = "select id_jogo, nome_jogo, preco_jogo from `bibliotecajogos`.`jogos`;";
         try {
             PreparedStatement stmt = connection.prepareStatement(query);
 
             ResultSet rs = stmt.executeQuery();
             String lista = "\nLista de jogos:\n";
             while (rs.next()){
-                lista += rs.getInt("id_jogo") + " - " + rs.getString("nome_jogo") + "\n";
+                lista += rs.getInt("id_jogo") + " - " + rs.getString("nome_jogo") + rs.getString("preco_jogo") + "\n";
             }
             return lista;
         }catch(SQLException e){
