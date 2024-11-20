@@ -7,15 +7,16 @@ import java.util.Scanner;
 
 public class ControllerTexto {
     private Model model = new Model();
-
+    private int end;
     public ControllerTexto(){
         Scanner input = new Scanner(System.in);
-        while(true){
+        end = 0;
+        while(end == 0){
             ModoTexto.imprimirMenuEntrada();
             switch(input.nextLine()){
                 case "1" -> iniciarLogin();
                 case "2" -> cadastrarNovoUsuario();
-                case "0" -> System.exit(0);
+                case "0" -> end = 1;
             }
         }
     }
@@ -63,13 +64,23 @@ public class ControllerTexto {
                     ai precisa checar com o usuário se ele tem saldo pra adquirir o jogo, se tiver só atualizar o saldo e botar o jogo na biblioteca dele
                      */
                     ModoTexto.imprimirLista(model.pegarLojaJogos());
+                    ModoTexto.imprimirOpcaoJogoCompra();
+                    String idJogoCompra = input.nextLine();
+                    double precoJogo = model.pegarPrecoJogo(idJogoCompra);
+                    double saldoUsuario = model.consultarSaldo();
+
+                    if(saldoUsuario >= precoJogo) {
+                        model.adicionarJogoUsuario(idJogoCompra);
+                        //atualizarSaldo
+                    }
+                    else System.out.println("desculpe, mas você não tem saldo suficiente para realizar essa compra");
                 }
                 case "2" ->{
                     /*
                     esse é só pegar a biblioteca do usuário inteira
                     literal: select jogos_id_jogo, nome_jogo from bibliotecajogos.bibliotecas join bibliotecajogos.jogos on bibliotecas.jogos_id_jogo = jogos.id_jogo where bibliotecajogos.bibliotecas.id_usuario = ? ;
                      */
-                    ModoTexto.imprimirLista(model.pegarBiblioteca());
+                    ModoTexto.imprimirLista(model.pegarBibliotecaDoUsuario());
                 }
                 case "3" ->{
                     ModoTexto.imprimirSaldoAtual(String.valueOf(model.consultarSaldo()));

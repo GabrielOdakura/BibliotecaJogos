@@ -83,4 +83,8 @@ public class ModoTexto {
             System.out.println("Nenhuma notícia foi encontrada!");
         }else System.out.println(s);
     }
+
+    public static void imprimirOpcaoJogoCompra(){
+        System.out.println("Escolha o jogo que deseja comprar: ");
+    }
 }

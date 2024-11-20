@@ -18,11 +18,11 @@ public class Model {
     }
 
     public String pegarLojaJogos(){
-        return "";
+        return conector.pegarListaTodosJogos();
     }
 
-    public String pegarBiblioteca(){
-        return "";
+    public String pegarBibliotecaDoUsuario(){
+        return conector.pegarListaJogosUsuario(usuario);
     }
 
     public Double consultarSaldo(){
@@ -33,12 +33,20 @@ public class Model {
         return conector.atualizarSaldo(novoSaldo, usuario);
     }
 
+    public int adicionarJogoUsuario(String idJogo){
+        return conector.adicionarJogoUsuario(idJogo,usuario);
+
+    }
     public int inserirNovoUsuario(String usuario, String senha) {
         return conector.inserirNovoUsuario(usuario, senha);
     }
 
+    public double pegarPrecoJogo(String idJogo){
+        return conector.pegarPrecoJogo(idJogo);
+    }
+
     public String pegarListaJogos() {
-        return conector.pegarListaJogos();
+        return conector.pegarListaTodosJogos();
     }
 
     public String pegarNoticia(int id) {
